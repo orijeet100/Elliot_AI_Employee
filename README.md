@@ -49,6 +49,8 @@ He doesn’t just *chat* — he **acts**.
 - **MongoDB Atlas** – preference memory  
 - **Slack, Linear, Google Calendar** – core integrations  
 
+
+The files in this github have the node structure of the agents and sub agents taken from N8N.
 ---
 
 ## 📹 Demo
