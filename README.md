@@ -42,6 +42,7 @@ He doesn’t just *chat* — he **acts**.
 ---
 
 ## 🛠️ Tech Stack
+- **vapi** – phone call service + orchestration with webhooks  
 - **n8n** – orchestration layer  
 - **Zapier MCP** – multi-app tool bridge  
 - **OpenAI** – natural language brain  
@@ -56,9 +57,8 @@ He doesn’t just *chat* — he **acts**.
 ---
 
 ## 📌 Future Plans
-- Add GitHub integration for PR reviews  
 - Tie into PagerDuty/Datadog for incident awareness  
-- Experiment with voice calls (Vapi integration)  
+- Experiment with automatic notes taking while in a meeting
 
 ---
 
