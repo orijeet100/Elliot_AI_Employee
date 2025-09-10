@@ -33,7 +33,7 @@
             "parameters": [
               {
                 "name": "Authorization",
-                "value": "=Bearer lin_api_mWwFjoGRaAi3fFRFxEFUy8Kipy0QGpwG4Kjvx5yK"
+                "value": "=Bearer {API_key}"
               },
               {
                 "name": "Content-Type",
