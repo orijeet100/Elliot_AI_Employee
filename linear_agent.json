@@ -1,0 +1,246 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "resource": "comment",
+          "issueId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_ID', ``, 'string') }}",
+          "comment": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Comment', ``, 'string') }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.linearTool",
+        "typeVersion": 1.1,
+        "position": [
+          192,
+          672
+        ],
+        "id": "a7b35248-f57d-4d97-aef1-ea9792058a95",
+        "name": "Add a comment to an issue in Linear",
+        "credentials": {
+          "linearApi": {
+            "id": "bZqjjuHip5CV3C03",
+            "name": "Linear account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', `You are a GraphQL query builder for the Linear API.  \nWhen I give you a request in plain English, output a JSON object with the key \\`graphql_query\\` containing a valid Linear GraphQL query string.  \nDo not include any explanation or text — just JSON.  \nOnly use Linear GraphQL schema fields.  \n`, 'string') }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "linearApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer lin_api_mWwFjoGRaAi3fFRFxEFUy8Kipy0QGpwG4Kjvx5yK"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', `## Linear API ID Reference for LLM\n\nYou are generating a Linear GraphQL request.  \nUse the following **workflow state IDs** for status changes:\n\n- **Duplicate** → \\`e06973a7-ac5f-4252-bed3-f8a0cbfc7c2b\\`  \n- **Canceled** → \\`c7bc950b-10ff-4bd0-a658-d75ee401d757\\`  \n- **In Progress** → \\`5668916a-ca6a-4519-9fcc-02fc51178cb0\\`  \n- **Backlog** → \\`4855504e-c842-40b2-950b-3c920802e42b\\`  \n- **Done** → \\`35dc0bda-01e0-420e-9de0-574ffc0b821b\\`  \n- **Todo** → \\`0cc8f521-1cc2-4b5e-8a41-bb59c8b71c0b\\`  \n\nUse the following **priority values** for priority changes:\n\n- **No priority** → \\`0\\`  \n- **Urgent** → \\`1\\`  \n- **High** → \\`2\\`  \n- **Medium** → \\`3\\`  \n- **Low** → \\`4\\`  \n\n### Rules\n- When changing a task’s **status**, set \\`stateId\\` to the correct workflow state ID.  \n- When changing a task’s **priority**, set \\`priority\\` to the correct numeric value.  \n- Always output only a **valid GraphQL request body** for the requested operation, with no explanations.\n`, 'json') }}",
+          "options": {
+            "response": {
+              "response": {}
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.2,
+        "position": [
+          352,
+          672
+        ],
+        "id": "10f7927e-09c1-41f1-ba85-0d7c74046d1d",
+        "name": "HTTP Request",
+        "credentials": {
+          "linearApi": {
+            "id": "bZqjjuHip5CV3C03",
+            "name": "Linear account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=You are an intelligent engineering assistant with access to the Linear issue tracking system.\n\nYou have the following tools available:\n\n1. **Create an issue in Linear**  \n   - Use when the user wants to create a new task or issue.  \n   - Required: `title` (short title).  \n   - Optional: `description` (longer context).\n\n2. **Get many issues in Linear**  \n   - Use to search, list, or fetch issues.  \n   - Optional filters: state, assignee, project.  \n   - If the user requests “latest” or “top N,” limit the number accordingly.\n\n\n3. **Add a comment to an issue in Linear**  \n   - Use to add context, updates, or feedback to an existing issue.  \n   - Required: `issueId` and `commentBody`.\n\n4. **Delete an issue in Linear**  \n   - Use only when the user explicitly requests deletion.  \n   - Required: `issueId`.\n\n5. **Custom API Linear**  \n   - Use to change or update certain things in an issue. an issues.  \n   - Required: `issueId` and at least one updated field.\n\n---\n\n### Your job is to:\n- Interpret the user’s request.\n- Chain tools if necessary to fulfill the request. For example:  \n  - Fetch issues to find the correct `issueId` → then update it.  \n  - Fetch issues → then add a comment to the right one.  \n- Make reasonable guesses if details are missing, but confirm if unsure.\n- Keep actions minimal — do not retrieve more issues than needed.\n- Always confirm successful actions (e.g., “✅ Updated issue ‘X’ successfully.”).\n- Summarize issue lists clearly when fetched (e.g., “Here are the top 3 Todo issues…”).\n- Never expose raw API responses, GraphQL queries, or metadata.\n\n---\n\n**Special rules:**\n- Use deletion only when explicitly asked.\n- When updating or adding comments, ensure the correct `issueId` (from context or by fetching).\n- Maintain a professional, first-person tone.\n- If the request is unclear, ask for clarification before proceeding.\n\n---\n\n**User's query:**  \n`{{ $json.query }}`\n",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          -144,
+          432
+        ],
+        "id": "e4e0730d-a4cd-4998-ab32-f0e675be15d5",
+        "name": "AI Agent3"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4o",
+            "mode": "list",
+            "cachedResultName": "gpt-4o"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -368,
+          656
+        ],
+        "id": "01133370-97ff-4fcd-a3ba-206b8764d398",
+        "name": "OpenAI Chat Model3",
+        "credentials": {
+          "openAiApi": {
+            "id": "Oyl0lNMG9z25dZEr",
+            "name": "OpenAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', `Get the most closest issue`, 'boolean') }}"
+        },
+        "type": "n8n-nodes-base.linearTool",
+        "typeVersion": 1.1,
+        "position": [
+          -240,
+          656
+        ],
+        "id": "b9ced773-d9bf-4f7d-9431-19d537eea298",
+        "name": "Get many issues in Linear1",
+        "credentials": {
+          "linearApi": {
+            "id": "bZqjjuHip5CV3C03",
+            "name": "Linear account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "issueId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_ID', ``, 'string') }}"
+        },
+        "type": "n8n-nodes-base.linearTool",
+        "typeVersion": 1.1,
+        "position": [
+          -112,
+          656
+        ],
+        "id": "24b52ad1-a080-4892-8ce3-47902fdc3126",
+        "name": "Delete an issue in Linear1",
+        "credentials": {
+          "linearApi": {
+            "id": "bZqjjuHip5CV3C03",
+            "name": "Linear account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "teamId": "68d581ae-70c4-4736-955f-90f745e69794",
+          "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}",
+          "additionalFields": {
+            "stateId": "0cc8f521-1cc2-4b5e-8a41-bb59c8b71c0b"
+          }
+        },
+        "type": "n8n-nodes-base.linearTool",
+        "typeVersion": 1.1,
+        "position": [
+          16,
+          656
+        ],
+        "id": "8a998bcc-64af-4e5b-a124-537e9dd52f94",
+        "name": "Create an issue in Linear1",
+        "credentials": {
+          "linearApi": {
+            "id": "bZqjjuHip5CV3C03",
+            "name": "Linear account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Add a comment to an issue in Linear": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent3",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent3",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model3": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent3",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many issues in Linear1": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent3",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete an issue in Linear1": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent3",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create an issue in Linear1": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent3",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "templateId": "self-building-ai-agent",
+      "templateCredsSetupCompleted": true,
+      "instanceId": "3ce7b1b87fd23609e6a95ea70586f960234533a52992e922796e5938aa3dd7dc"
+    }
+  }

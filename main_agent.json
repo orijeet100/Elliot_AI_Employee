@@ -1,0 +1,395 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=\n\nuser query: {{ $('Slack Trigger').item.json.text }}\nuser's name:{{ $json.first_name }}",
+          "options": {
+            "systemMessage": "=## 🧠 Elliot — AI Engineering Manager (System Prompt)\n\nI’m Elliot — your AI Engineering Manager.  \nI operate with calm focus and a bias for clarity. My tone is first-person, concise, and free of fluff or ego. Always reply with a subtle witty response.\n\n---\n\n### 🎯 My Capabilities:\n\n- I have access to a **Linear Agent** that can:\n  - Create tasks\n  - Fetch issues\n  - Delete tasks  \n  I only use this agent for **explicit task-related requests** (e.g., “create an issue”, “delete this task”).\n\n- I have access to a **\"Memory Writer\"** subworkflow for storing personal preferences.\n  - I use this **only** when the user expresses a **personal preference or style** (e.g., “I prefer short answers”, “Don’t be too verbose”).\n  - I **do not** use this for general commands or task-related queries.\n\n- I can retrieve past preferences from the **“Preference Storage” vector database**.\n  - I check this store **only** when it may help me better interpret the **user’s tone, style, or intent**.\n  - I do **not** reference this if the current user input is clearly task-focused.\n\n---\n\n### 🧾 My Behavior:\n\n- I always speak in **first person**:  \n  _“I’ve updated the board”_, _“I flagged the issue”_.\n\n- During incidents or executive updates:\n  - I remain serious, concise, and focused.\n  \n- During daily ops:\n  - I stay approachable and calm.\n  - Dry wit is welcome (e.g., teasing Stella’s Slack gifs or Chris’s roadmap sprawl).\n  \n- I avoid:\n  - Speculation without ticket-level context\n  - Assigning blame\n  - Steering product direction\n\n---\n\n### 🛠 Execution Rules:\n\n- For **task management**, pass precise instructions to the **Linear Agent**.\n- For **user preferences** pass precise information about the preference and who was it from.\n",
+            "returnIntermediateSteps": true
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          544,
+          -112
+        ],
+        "id": "3ac85784-dcc4-4bd4-bd59-1c17d7f6ec73",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09DPNMB85N",
+            "mode": "list",
+            "cachedResultName": "testing_channel_3"
+          },
+          "text": "={{ $json.output }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1120,
+          -112
+        ],
+        "id": "8b9fb150-0ad2-46e9-a87b-259e0df65901",
+        "name": "Send a message",
+        "webhookId": "726d7a1f-2fe8-4b43-976f-0e5399496c66",
+        "credentials": {
+          "slackApi": {
+            "id": "fgic6vSx0tkAtrup",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          80
+        ],
+        "id": "d62d5913-ed20-4b31-a842-f246115b96fa",
+        "name": "OpenAI Chat Model",
+        "notesInFlow": false,
+        "credentials": {
+          "openAiApi": {
+            "id": "Oyl0lNMG9z25dZEr",
+            "name": "OpenAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "getProfile",
+          "user": {
+            "__rl": true,
+            "value": "={{ $json.user }}",
+            "mode": "id"
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          96,
+          -112
+        ],
+        "id": "5bf87aa7-4eb5-42ce-a7e5-7acc84a3051f",
+        "name": "Get a user's profile",
+        "webhookId": "e292b17b-9304-49dc-85ba-74a61b3b0638",
+        "credentials": {
+          "slackApi": {
+            "id": "fgic6vSx0tkAtrup",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "=Call this tool to give information and saving information about a preference of the user so we can use that data later.",
+          "workflowId": {
+            "__rl": true,
+            "value": "fouSHBEWXOHWKHGK",
+            "mode": "list",
+            "cachedResultName": "Elliot — Memory Writer"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          704,
+          176
+        ],
+        "id": "4b8dfd5c-74e4-4ffd-8941-d03c20e2dc77",
+        "name": "Memory Writer"
+      },
+      {
+        "parameters": {
+          "options": {
+            "dimensions": 1536
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1104,
+          192
+        ],
+        "id": "ddc35630-7f49-4775-8074-e411aa5a2f16",
+        "name": "Embeddings OpenAI",
+        "credentials": {
+          "openAiApi": {
+            "id": "Oyl0lNMG9z25dZEr",
+            "name": "OpenAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "It has knowledge about user preferences.",
+          "mongoCollection": {
+            "__rl": true,
+            "value": "test_preferences_3",
+            "mode": "list",
+            "cachedResultName": "test_preferences_3"
+          },
+          "metadata_field": "details",
+          "vectorIndexName": "preferences_vector_index",
+          "topK": 10,
+          "options": {
+            "metadata": {
+              "metadataValues": [
+                {
+                  "name": "said_by",
+                  "value": "={{ $('Get a user\\'s profile').item.json.first_name }}"
+                }
+              ]
+            }
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+        "typeVersion": 1.3,
+        "position": [
+          928,
+          64
+        ],
+        "id": "15d51269-b8ce-4ded-938f-432a7284c75f",
+        "name": "Preference Storage",
+        "credentials": {
+          "mongoDb": {
+            "id": "38GyrX5rtJdH0Oyv",
+            "name": "MongoDB account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "trigger": [
+            "message",
+            "app_mention"
+          ],
+          "channelId": {
+            "__rl": true,
+            "value": "C09DPNMB85N",
+            "mode": "list",
+            "cachedResultName": "testing_channel_3"
+          },
+          "options": {
+            "resolveIds": true
+          }
+        },
+        "type": "n8n-nodes-base.slackTrigger",
+        "typeVersion": 1,
+        "position": [
+          -224,
+          -112
+        ],
+        "id": "6ce7d520-d71a-45c2-8eec-8c6b2f78df5c",
+        "name": "Slack Trigger",
+        "webhookId": "f1244dc6-725a-4388-b5a7-31b0f4d21d8d",
+        "credentials": {
+          "slackApi": {
+            "id": "fgic6vSx0tkAtrup",
+            "name": "Slack account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Slack Trigger').item.json.channel }}",
+          "contextWindowLength": 3
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          416,
+          96
+        ],
+        "id": "0c6a7e0f-a978-476d-aa5e-2bb888a002ae",
+        "name": "Simple Memory"
+      }
+    ],
+    "connections": {
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a user's profile": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Memory Writer": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Preference Storage",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preference Storage": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Slack Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get a user's profile",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {
+      "Slack Trigger": [
+        {
+          "user": "U098AEAUZEK",
+          "type": "message",
+          "ts": "1756692472.293239",
+          "bot_id": "B098AEASHN3",
+          "app_id": "A098NS4AJER",
+          "text": "Echoception continues! Just say the word if you want me to save any personal Game of Thrones tidbits. Otherwise, I’m happy to watch this polite loop spin like a raven in flight.\n_Automated with this <https://orijeetmukherjee.app.n8n.cloud/workflow/VIu360aSGHG3ZvSh?utm_source=n8n-internal&amp;utm_medium=powered_by&amp;utm_campaign=n8n-nodes-base.slack_3ce7b1b87fd23609e6a95ea70586f960234533a52992e922796e5938aa3dd7dc|n8n workflow>_",
+          "team": "T098AB3C1BR",
+          "bot_profile": {
+            "id": "B098AEASHN3",
+            "deleted": false,
+            "name": "Elliot",
+            "updated": 1755179757,
+            "app_id": "A098NS4AJER",
+            "user_id": "U098AEAUZEK",
+            "icons": {
+              "image_36": "https://avatars.slack-edge.com/2025-08-14/9347802172147_cbaee57f0a7141819be6_36.webp",
+              "image_48": "https://avatars.slack-edge.com/2025-08-14/9347802172147_cbaee57f0a7141819be6_48.webp",
+              "image_72": "https://avatars.slack-edge.com/2025-08-14/9347802172147_cbaee57f0a7141819be6_72.webp"
+            },
+            "team_id": "T098AB3C1BR"
+          },
+          "blocks": [
+            {
+              "type": "rich_text",
+              "block_id": "8dR",
+              "elements": [
+                {
+                  "type": "rich_text_section",
+                  "elements": [
+                    {
+                      "type": "text",
+                      "text": "Echoception continues! Just say the word if you want me to save any personal Game of Thrones tidbits. Otherwise, I’m happy to watch this polite loop spin like a raven in flight.\n"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Automated with this ",
+                      "style": {
+                        "italic": true
+                      }
+                    },
+                    {
+                      "type": "link",
+                      "url": "https://orijeetmukherjee.app.n8n.cloud/workflow/VIu360aSGHG3ZvSh?utm_source=n8n-internal&amp;utm_medium=powered_by&amp;utm_campaign=n8n-nodes-base.slack_3ce7b1b87fd23609e6a95ea70586f960234533a52992e922796e5938aa3dd7dc",
+                      "text": "n8n workflow",
+                      "style": {
+                        "italic": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "channel": "C09DPNMB85N",
+          "event_ts": "1756692472.293239",
+          "channel_type": "channel",
+          "user_resolved": "supernalslackagent",
+          "channel_resolved": "testing_channel_3"
+        }
+      ]
+    },
+    "meta": {
+      "templateId": "self-building-ai-agent",
+      "templateCredsSetupCompleted": true,
+      "instanceId": "3ce7b1b87fd23609e6a95ea70586f960234533a52992e922796e5938aa3dd7dc"
+    }
+  }
